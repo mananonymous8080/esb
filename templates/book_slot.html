@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Exam Slots</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Include datepicker library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body>
+
+    <h1>Book Your Exam Slot</h1>
+    
+    <!-- Form should submit to '/book' route -->
+    <form action="{{ url_for('book_slot') }}" method="POST">
+        <label for="exam_name">Exam Name:</label>
+        <input type="text" name="exam_name" id="exam_name" required>
+
+        <label for="exam_date">Select Date:</label>
+        <input type="text" name="exam_date" id="exam_date" class="datepicker" required>
+
+        <label for="exam_time">Select Time:</label>
+        <input type="time" name="exam_time" id="exam_time" required>
+
+        <label for="name">Your Name:</label>
+        <input type="text" name="name" id="name" required>
+
+        <label for="mobile">Mobile Number:</label>
+        <input type="text" name="mobile" id="mobile" required>
+
+        <label for="email">Email Address:</label>
+        <input type="email" name="email" id="email" required>
+
+        <button type="submit">Book Slot</button>
+    </form>
+
+    <h2>Available Exam Slots</h2>
+    <div class="slots">
+        {% for slot in slots %}
+            <div class="slot-card">
+                <h3>{{ slot[1] }}</h3>
+                <p>Date: {{ slot[2] }}</p>
+                <p>Time: {{ slot[3] }}</p>
+                <p>Mobile: {{ slot[4] }}</p>
+                <p>Email: {{ slot[5] }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        flatpickr(".datepicker", {
+            dateFormat: "Y-m-d"
+        });
+    </script>
+
+</body>
+</html>
