@@ -23,7 +23,8 @@ mysql = MySQLdb.connect(
     user=DB_USER,
     passwd=DB_PASSWORD,
     db=DB_NAME,
-    port=DB_PORT
+    port=DB_PORT,
+    ssl={"ssl": {}}
 )
 
 
