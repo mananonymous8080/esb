@@ -6,6 +6,7 @@ import os
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Needed for flash and session
 
+# Environment variables for DB config
 DB_HOST = os.environ["DB_HOST"]
 DB_USER = os.environ["DB_USER"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
@@ -13,28 +14,29 @@ DB_NAME = os.environ["DB_NAME"]
 DB_PORT = int(os.environ["DB_PORT"])
 ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
 
-
-# MySQL Configuration
+# Configure pymysql as MySQLdb
 pymysql.install_as_MySQLdb()
 import MySQLdb
-# Connect to DB
-mysql = MySQLdb.connect(
-    host=DB_HOST,
-    user=DB_USER,
-    passwd=DB_PASSWORD,
-    db=DB_NAME,
-    port=DB_PORT,
-    ssl={"ssl": {}}
-)
 
-
+# Helper function to get a fresh DB connection
+def get_connection():
+    return MySQLdb.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        passwd=DB_PASSWORD,
+        db=DB_NAME,
+        port=DB_PORT,
+        ssl={"ssl": {}}  # Update with CA cert for TiDB if needed
+    )
 
 @app.route('/')
 def index():
-    cur = mysql.cursor()
+    conn = get_connection()
+    cur = conn.cursor()
     cur.execute("SELECT * FROM predefined_slots")
     predefined_slots = cur.fetchall()
     cur.close()
+    conn.close()
     return render_template('index.html', predefined_slots=predefined_slots)
 
 @app.route('/book', methods=['POST'])
@@ -46,16 +48,17 @@ def book_slot():
     exam_date = request.form.get('exam_date')
     exam_time = request.form.get('exam_time')
 
-    cur = mysql.cursor()
+    conn = get_connection()
+    cur = conn.cursor()
     query = "INSERT INTO slots (name, mobile, email, exam_name, exam_date, exam_time) VALUES (%s, %s, %s, %s, %s, %s)"
     cur.execute(query, (name, mobile, email, exam_name, exam_date, exam_time))
-    mysql.commit()
+    conn.commit()
     cur.close()
+    conn.close()
 
     flash("Slot booked successfully! We will connect you shortly.")
     return redirect(url_for('index'))
 
-# Admin login route
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -67,19 +70,20 @@ def admin_login():
             flash("Incorrect admin password.")
     return render_template('admin_login.html')
 
-# Admin dashboard (protected)
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if not session.get('is_admin'):
         flash("Access denied. Please log in as admin.")
         return redirect(url_for('admin_login'))
 
-    cur = mysql.cursor()
+    conn = get_connection()
+    cur = conn.cursor()
     cur.execute("SELECT * FROM slots")
     booked_slots = cur.fetchall()
     cur.execute("SELECT * FROM predefined_slots")
     predefined_slots = cur.fetchall()
     cur.close()
+    conn.close()
     return render_template('admin.html', booked_slots=booked_slots, predefined_slots=predefined_slots)
 
 @app.route('/admin/logout')
@@ -98,11 +102,13 @@ def add_predefined():
     exam_date = request.form.get('exam_date')
     exam_time = request.form.get('exam_time')
 
-    cur = mysql.cursor()
+    conn = get_connection()
+    cur = conn.cursor()
     cur.execute("INSERT INTO predefined_slots (exam_name, exam_date, exam_time) VALUES (%s, %s, %s)",
                 (exam_name, exam_date, exam_time))
-    mysql.commit()
+    conn.commit()
     cur.close()
+    conn.close()
     flash("Predefined slot added successfully.")
     return redirect(url_for('admin_dashboard'))
 
@@ -112,10 +118,12 @@ def delete_slot(slot_id):
         flash("Access denied.")
         return redirect(url_for('admin_login'))
 
-    cur = mysql.cursor()
+    conn = get_connection()
+    cur = conn.cursor()
     cur.execute("DELETE FROM slots WHERE id = %s", (slot_id,))
-    mysql.commit()
+    conn.commit()
     cur.close()
+    conn.close()
     flash("Booking deleted successfully.")
     return redirect(url_for('admin_dashboard'))
 
@@ -125,10 +133,12 @@ def delete_predefined(slot_id):
         flash("Access denied.")
         return redirect(url_for('admin_login'))
 
-    cur = mysql.cursor()
+    conn = get_connection()
+    cur = conn.cursor()
     cur.execute("DELETE FROM predefined_slots WHERE id = %s", (slot_id,))
-    mysql.commit()
+    conn.commit()
     cur.close()
+    conn.close()
     flash("Predefined slot deleted successfully.")
     return redirect(url_for('admin_dashboard'))
 
