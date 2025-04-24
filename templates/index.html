@@ -88,6 +88,9 @@
                     <img src="{{ url_for('static', filename='upi_qr.jpg') }}" alt="Scan to Pay" class="img-fluid rounded shadow-sm">
                     <p class="mt-3 text-muted small">Please scan the QR using any UPI app (Paytm, GPay, PhonePe, etc.)</p>
                 </div>
+                <a href="{{ url_for('static', filename='upi_qr.jpg') }}" download="UPI_QR_Code.jpg" class="btn btn-outline-secondary btn-sm">
+                    ⬇️ Download QR Code
+                  </a>
                 <div class="modal-footer">
                     <button class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
                 </div>
