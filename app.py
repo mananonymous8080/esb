@@ -2,6 +2,7 @@ import pymysql
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from datetime import datetime
 import os
+from email_helper import send_booking_email 
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Needed for flash and session
@@ -12,7 +13,7 @@ DB_USER = os.environ["DB_USER"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
 DB_NAME = os.environ["DB_NAME"]
 DB_PORT = int(os.environ["DB_PORT"])
-ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
+ADMIN_LOGIN_PASSWORD = os.environ["ADMIN_LOGIN_PASSWORD"]
 
 # Configure pymysql as MySQLdb
 pymysql.install_as_MySQLdb()
@@ -56,6 +57,9 @@ def book_slot():
     cur.close()
     conn.close()
 
+    # ✅ Send email after booking
+    send_booking_email(name, email, mobile, exam_name, exam_date, exam_time)
+    
     flash("Slot booked successfully! We will connect you shortly.")
     return redirect(url_for('index'))
 
@@ -63,7 +67,7 @@ def book_slot():
 def admin_login():
     if request.method == 'POST':
         password = request.form.get('password')
-        if password == ADMIN_PASSWORD:
+        if password == ADMIN_LOGIN_PASSWORD:
             session['is_admin'] = True
             return redirect(url_for('admin_dashboard'))
         else:

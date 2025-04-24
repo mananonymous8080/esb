@@ -9,3 +9,4 @@ gunicorn
 cryptography
 pymysql
 python-dotenv
+python-dateutil
