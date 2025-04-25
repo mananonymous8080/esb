@@ -1,0 +1,27 @@
+<!-- Payment Modal -->
+<div class="modal fade" id="payModal{{ slot[0] }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Complete Your Payment</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Choose a method to complete your payment:</p>
+                <div class="d-grid gap-3">
+                    <a href="upi://pay?pa={{ upi_id }}&pn=ExamSlotBooking&cu=INR" class="btn btn-primary">
+                        📲 Pay Using UPI App
+                    </a>
+                    <button class="btn btn-outline-dark" data-bs-toggle="collapse" data-bs-target="#qrSection{{ slot[0] }}">
+                        🧾 Scan QR Code to Pay
+                    </button>
+                    <div class="collapse mt-3 text-center" id="qrSection{{ slot[0] }}">
+                        <img src="{{ url_for('static', filename='upi_qr.jpg') }}" alt="QR Code" class="img-fluid" style="max-height: 250px;">
+                        <p class="mt-2 small">Scan using any UPI App</p>
+                        <a href="{{ url_for('static', filename='upi_qr.jpg') }}" download="UPI_QR_Code.jpg" class="btn btn-outline-secondary btn-sm">⬇️ Download QR Code</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

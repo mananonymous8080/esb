@@ -1,247 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Book Exam Slot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <style>
-    body {
-      background: #fffaf6;
-      font-family: 'Segoe UI', sans-serif;
-      color: #333;
-    }
+{% extends 'base.html' %}
+{% block title %}Book Exam Slot{% endblock %}
 
-    h1, h2 {
-      color: #1a1a1a;
-      font-weight: 600;
-    }
+{% block content %}
+<div class="container mt-3 mb-5">
 
-    .top-bar {
-      background: linear-gradient(90deg, #1e3c72, #2a5298);
-      color: #fff;
-      padding: 1.5rem 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .top-bar h1 {
-      margin-bottom: 0;
-    }
-
-    .card {
-      border: none;
-      border-radius: 1rem;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-      transition: all 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      background: #e6f7ff;
-    }
-
-    .btn-primary {
-      background-color: #007bff;
-      border: none;
-      border-radius: 0.5rem;
-    }
-
-    .btn-warning {
-      border: none;
-      border-radius: 0.5rem;
-      background-color: #ffc107;
-      font-weight: 500;
-    }
-
-    .btn-outline-primary {
-      border-radius: 0.5rem;
-    }
-
-    .btn-success {
-      border-radius: 0.5rem;
-      background-color: #28a745;
-    }
-
-    .modal-content {
-      border-radius: 1rem;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .form-label {
-      font-weight: 600;
-    }
-
-    .form-control {
-      border-radius: 0.5rem;
-    }
-
-    section h2 {
-      margin-top: 3rem;
-      margin-bottom: 1.5rem;
-      border-left: 4px solid #007bff;
-      padding-left: 0.75rem;
-    }
-
-    footer {
-      margin-top: 4rem;
-      color: #6c757d;
-    }
-
-    @media (max-width: 576px) {
-      .top-bar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .top-bar button {
-        align-self: flex-end;
-        margin-top: 1rem;
-      }
-    }
-  </style>
-</head>
-<body>
-
-<div class="container my-5">
-    <div class="top-bar mb-4">
+  <!-- Header + Track -->
+  <div class="row align-items-center mb-4">
+    <div class="col-md-8 text-center text-md-start">
         <h1 class="mb-0">📘 Book Your Exam/Interview Slot</h1>
-        <button class="btn btn-warning px-3 py-2" data-bs-toggle="modal" data-bs-target="#paymentModal">
-            📲 Pay via UPI
+    </div>
+    <div class="col-md-4 text-md-end text-center mt-3 mt-md-0 d-flex justify-content-center justify-content-md-end gap-2">
+        <button class="btn btn-info px-3 py-2" data-bs-toggle="collapse" data-bs-target="#trackSlotForm" aria-expanded="false" aria-controls="trackSlotForm">
+            🔍 Track Your Slot
         </button>
     </div>
+  </div>
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <script type="text/javascript">
-                alert("{{ messages[0] }}");
-            </script>
-        {% endif %}
-    {% endwith %}
+ 
 
-    <!-- Payment Modal -->
-    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content text-center">
-                <div class="modal-header">
-                    <h5 class="modal-title w-100" id="paymentModalLabel">Scan & Pay via UPI</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <img src="{{ url_for('static', filename='upi_qr.jpg') }}" alt="Scan to Pay" class="img-fluid rounded shadow-sm">
-                    <p class="mt-3 text-muted small">Please scan the QR using any UPI app (Paytm, GPay, PhonePe, etc.)</p>
-                </div>
-                <a href="{{ url_for('static', filename='upi_qr.jpg') }}" download="UPI_QR_Code.jpg" class="btn btn-outline-secondary btn-sm">
-                    ⬇️ Download QR Code
-                  </a>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary w-100" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+  {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          <script>alert("{{ messages[0] }}");</script>
+      {% endif %}
+  {% endwith %}
 
+  <!-- 🔍 Track Your Slot Form -->
+  <div class="collapse mb-5" id="trackSlotForm">
+    <form action="{{ url_for('search_slots') }}" method="get" class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
+      <input type="text" class="form-control" name="query" placeholder="Enter Mobile or Email" required style="max-width: 300px;">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+
+  <!-- 📌 View Ongoing Exam Slots Button -->
+  <div class="text-center my-5">
+    <button class="btn btn-outline-primary px-4 py-2 fw-semibold" data-bs-toggle="collapse" data-bs-target="#ongoingSlots" aria-expanded="false" aria-controls="ongoingSlots">
+      📌 View Ongoing Exam Slots
+    </button>
+  </div>
+
+  <!-- 📌 Ongoing Exam Slots -->
+  <div class="collapse" id="ongoingSlots">
     {% if predefined_slots %}
     <section class="mb-5">
-        <h2 class="mb-4">📌 Ongoing Exam Slots</h2>
+        <h2 class="mb-4 text-center">📌 Ongoing Exam Slots</h2>
         <div class="row">
             {% for slot in predefined_slots %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ slot[1] }}</h5>
-                        <p class="card-text mb-2">
-                            📅 <strong>{{ slot[2] }}</strong><br>
-                            ⏰ <strong>{{ slot[3] }}</strong>
-                        </p>
-                        <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#modal{{ slot[0] }}">Book</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="modal{{ slot[0] }}" tabindex="-1" aria-labelledby="modalLabel{{ slot[0] }}" aria-hidden="true">
-                <div class="modal-dialog">
-                    <form method="POST" action="{{ url_for('book_slot') }}" class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalLabel{{ slot[0] }}">Book: {{ slot[1] }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="exam_name" value="{{ slot[1] }}">
-                            <input type="hidden" name="exam_date" value="{{ slot[2] }}">
-                            <input type="hidden" name="exam_time" value="{{ slot[3] }}">
-
-                            <div class="mb-3">
-                                <label class="form-label">Your Name:</label>
-                                <input type="text" class="form-control" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email:</label>
-                                <input type="email" class="form-control" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Mobile:</label>
-                                <input type="text" class="form-control" name="mobile" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success w-100">Confirm Booking</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+                {% include 'components/slot_card.html' with context %}
             {% endfor %}
         </div>
     </section>
     {% endif %}
+  </div>
 
-    <!-- Custom Slot Booking Form -->
-    <section>
-        <h2 class="mb-3">🎯 Book a Custom Slot</h2>
-        <form action="{{ url_for('book_slot') }}" method="POST" class="row g-3">
-            <div class="col-md-4 col-sm-6">
-                <label class="form-label">Exam Name:</label>
-                <input type="text" class="form-control" name="exam_name" required>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <label class="form-label">Date:</label>
-                <input type="text" class="form-control datepicker" name="exam_date" required>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <label class="form-label">Time:</label>
-                <input type="time" class="form-control" name="exam_time" required>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <label class="form-label">Your Name:</label>
-                <input type="text" class="form-control" name="name" required>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <label class="form-label">Email:</label>
-                <input type="email" class="form-control" name="email" required>
-            </div>
-            <div class="col-md-4 col-sm-6">
-                <label class="form-label">Mobile:</label>
-                <input type="text" class="form-control" name="mobile" required>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary px-4 py-2">Book Custom Slot</button>
-            </div>
-        </form>
-    </section>
+  <!-- 🎯 Custom Form -->
+  <section class="d-flex justify-content-center">
+      <div class="w-100" style="max-width: 900px;">
+          {% include 'components/custom_form.html' %}
+      </div>
+  </section>
+
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    flatpickr(".datepicker", { dateFormat: "Y-m-d" });
-</script>
-
-</body>
-<footer class="text-center mt-5 py-3 text-muted small">
-    © 2025 Ajay Kumar — Built for learning, shared with the community.
-</footer>
-</html>
+{% endblock %}
