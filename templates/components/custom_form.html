@@ -1,0 +1,34 @@
+<section class="custom-form-section text-center">
+    <h2 class="mb-4 text-center">🎯 Book a Custom Slot</h2>
+    <form action="{{ url_for('book_slot') }}" method="POST" class="custom-form row g-3 justify-content-center text-center">
+      <div class="col-md-5 col-sm-6">
+        <label class="form-label">Exam Name:</label>
+        <input type="text" class="form-control" name="exam_name" required>
+      </div>
+      <div class="col-md-5 col-sm-6">
+        <label class="form-label">Date:</label>
+        <input type="text" class="form-control datepicker" name="exam_date" required>
+      </div>
+      <div class="col-md-5 col-sm-6">
+        <label class="form-label">Time:</label>
+        <input type="time" class="form-control" name="exam_time" required>
+      </div>
+      <div class="col-md-5 col-sm-6">
+        <label class="form-label">Your Name:</label>
+        <input type="text" class="form-control" name="name" required>
+      </div>
+      <div class="col-md-5 col-sm-6">
+        <label class="form-label">Email:</label>
+        <input type="email" class="form-control" name="email" required>
+      </div>
+      <div class="col-md-5 col-sm-6">
+        <label class="form-label">Mobile:</label>
+        <input type="text" class="form-control" name="mobile" required pattern="^\d{10}$" title="Please enter a 10-digit mobile number">
+
+      </div>
+      <div class="col-12 text-center">
+        <button type="submit" class="btn btn-primary px-4 py-2">Book Custom Slot</button>
+      </div>
+    </form>
+  </section>
+  

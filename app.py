@@ -14,6 +14,7 @@ DB_PASSWORD = os.environ["DB_PASSWORD"]
 DB_NAME = os.environ["DB_NAME"]
 DB_PORT = int(os.environ["DB_PORT"])
 ADMIN_LOGIN_PASSWORD = os.environ["ADMIN_LOGIN_PASSWORD"]
+UPI_ID = os.environ["UPI_ID"]
 
 # Configure pymysql as MySQLdb
 pymysql.install_as_MySQLdb()
@@ -29,6 +30,8 @@ def get_connection():
         port=DB_PORT,
         ssl={"ssl": {}}  # Update with CA cert for TiDB if needed
     )
+
+
 
 @app.route('/')
 def index():
@@ -60,8 +63,40 @@ def book_slot():
     # ✅ Send email after booking
     send_booking_email(name, email, mobile, exam_name, exam_date, exam_time)
     
-    flash("Slot booked successfully! We will connect you shortly.")
-    return redirect(url_for('index'))
+    flash("Slot registered successfully. Do payment for confirmation! We will connect with you shortly.")
+    return redirect(url_for('search_slots', query=mobile or email))
+
+
+
+@app.route('/search', methods=['GET'])
+def search_slots():
+    query = request.args.get('query')
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    cur.execute("""
+        SELECT * FROM slots 
+        WHERE mobile LIKE %s OR email LIKE %s
+    """, (f"%{query}%", f"%{query}%"))
+
+    results = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return render_template('search_results.html', results=results, query=query, upi_id=UPI_ID)
+
+
+
+
+
+
+
+
+
+
+################# ADMIN ##################
+
+
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
@@ -145,6 +180,26 @@ def delete_predefined(slot_id):
     conn.close()
     flash("Predefined slot deleted successfully.")
     return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/mark_as_paid', methods=['POST'])
+def mark_as_paid():
+    slot_id = request.form.get('slot_id')
+    payment_amount = request.form.get('payment_amount')
+    print(slot_id, payment_amount)
+    if slot_id and payment_amount:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("UPDATE slots SET payment_status = 'PAID', paid_amount = %s WHERE id = %s", (payment_amount, slot_id))
+        conn.commit()
+        cur.close()
+        conn.close()
+        flash("Payment status updated successfully.")
+    else:
+        flash("Failed to update payment status.")
+
+    return redirect(url_for('admin_dashboard'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

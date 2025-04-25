@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+
+    <div class="text-center my-4">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">🏠 Back to Home</a>
+    </div>
+    
+
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ messages[0] }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>      
+    {% endif %}
+    {% endwith %}
+
+
+
+    <h2 class="mb-4">🔎 Results for "{{ query }}"</h2>
+    {% if results %}
+        <div class="row">
+            {% for slot in results %}
+                <div class="col-12 col-sm-6 col-lg-4 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                Booking Id:#<strong>{{ slot[0] }}</strong><br>
+                                <h5 class="card-title">{{ slot[4] }}</h5>
+                                <p class="card-text small">
+                                    <strong>Booked by:</strong> {{ slot[1] }} - {{ slot[3] }}<br>
+                                    {{ slot[2] }}<br>
+                                    <strong>Date:</strong> {{ slot[5] }}<br>
+                                    <strong>Time:</strong> {{ slot[6] }}<br>
+                                    {% if slot[7] == 'PAID' %}
+                                        <strong class="text-success">Paid ₹{{ slot[8] }}</strong>
+                                    {% else %}
+                                    <strong class="text-danger">Unpaid. If paid, status will update soon. Contact admin if needed.</strong>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            {% if slot[7] == 'UNPAID' %}
+                                <button class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#payModal{{ slot[0] }}">
+                                    💳 PAY
+                                </button>
+                            {% else %}
+                                <button class="btn btn-secondary mt-2" disabled>✅ Paid</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% include 'components/payment_modal.html' %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">No matching slots found.</p>
+    {% endif %}
+</div>
+{% endblock %}
