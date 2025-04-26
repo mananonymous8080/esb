@@ -78,6 +78,26 @@
     {% endif %}
   {% endwith %}
 
+  <h4 class="mb-3 text-center">➕ Add Predefined Exam Slot</h4>
+  <div class="d-flex justify-content-center">
+      <form action="{{ url_for('add_predefined') }}" method="POST" class="mb-5 w-100" style="max-width: 800px;">
+          <div class="row g-3">
+              <div class="col-12 col-md-4">
+                  <input type="text" name="exam_name" class="form-control" placeholder="Exam Name" required>
+              </div>
+              <div class="col-6 col-md-3">
+                  <input type="date" name="exam_date" class="form-control" required>
+              </div>
+              <div class="col-6 col-md-3">
+                  <input type="time" name="exam_time" class="form-control" required>
+              </div>
+              <div class="col-12 col-md-2">
+                  <button type="submit" class="btn btn-primary w-100">Add Slot</button>
+              </div>
+          </div>
+      </form>
+  </div>
+
   <!-- Predefined Slots -->
   <h5 class="mb-3">📌 Predefined Exam Slots</h5>
   <div class="row g-3">
