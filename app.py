@@ -117,7 +117,7 @@ def admin_dashboard():
 
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM slots")
+    cur.execute("SELECT * FROM slots WHERE status IS NULL OR status = ''")
     booked_slots = cur.fetchall()
     cur.execute("SELECT * FROM predefined_slots")
     predefined_slots = cur.fetchall()
@@ -159,12 +159,14 @@ def delete_slot(slot_id):
 
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("DELETE FROM slots WHERE id = %s", (slot_id,))
+    # Instead of DELETE, we UPDATE the status
+    cur.execute("UPDATE slots SET status = 'deleted' WHERE id = %s", (slot_id,))
     conn.commit()
     cur.close()
     conn.close()
-    flash("Booking deleted successfully.")
+    flash("Slot marked as deleted successfully.")
     return redirect(url_for('admin_dashboard'))
+
 
 @app.route('/admin/delete_predefined/<int:slot_id>')
 def delete_predefined(slot_id):
@@ -199,6 +201,24 @@ def mark_as_paid():
         flash("Failed to update payment status.")
 
     return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/mark_as_done', methods=['POST'])
+def mark_as_done():
+    if not session.get('is_admin'):
+        flash("Access denied.")
+        return redirect(url_for('admin_login'))
+
+    slot_id = request.form.get('slot_id')
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("UPDATE slots SET status = %s WHERE id = %s", ('completed', slot_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash("Slot marked as done and moved to Completed  successfully.")
+    return redirect(url_for('admin_dashboard'))
+
 
 
 if __name__ == '__main__':
