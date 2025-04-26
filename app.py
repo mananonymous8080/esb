@@ -91,7 +91,9 @@ def search_slots():
 
 
 
-
+@app.route('/health')
+def health_check():
+    return 'OK', 200
 
 
 ################# ADMIN ##################
