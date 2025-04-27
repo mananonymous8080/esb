@@ -1,35 +1,34 @@
-<div class="col-lg-4 col-md-6 mb-4">
-    <div class="card h-100">
-      <div class="card-body">
-        <h5 class="card-title">{{ slot[1] }}</h5>
-        <p class="card-text mb-2">
-          📅 <strong>{{ slot[2] }}</strong><br>
-          ⏰ <strong>{{ slot[3] }}</strong>
-        </p>
-        <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#modal{{ slot[0] }}">Book</button>
-      </div>
-    </div>
-</div>
-  
-  <div class="modal fade" id="modal{{ slot[0] }}" tabindex="-1" aria-labelledby="modalLabel{{ slot[0] }}" aria-hidden="true">
-    <div class="modal-dialog">
-      <form method="POST" action="{{ url_for('book_slot') }}" class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalLabel{{ slot[0] }}">Book: {{ slot[1] }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="exam_name" value="{{ slot[1] }}">
-          <input type="hidden" name="exam_date" value="{{ slot[2] }}">
-          <input type="hidden" name="exam_time" value="{{ slot[3] }}">
-          <div class="mb-3"><label class="form-label">Your Name:</label><input type="text" class="form-control" name="name" required></div>
-          <div class="mb-3"><label class="form-label">Email:</label><input type="email" class="form-control" name="email" required></div>
-          <div class="mb-3"><label class="form-label">Mobile:</label><input type="text" class="form-control" name="mobile" required pattern="^\d{10}$" title="Please enter a 10-digit mobile number"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success w-100">Confirm Booking</button>
-        </div>
-      </form>
+<div class="col-lg-4 col-md-6">
+  <div class="card h-100 shadow-sm border-0 slot-card">
+    <div class="card-body">
+      <h5 class="card-title">{{ slot[1] }}</h5>
+      <p class="card-text mb-3 text-muted">
+        📅 <strong>{{ slot[2] }}</strong><br>
+        ⏰ <strong>{{ slot[3] }}</strong>
+      </p>
+      <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#modal{{ slot[0] }}">Book Slot</button>
     </div>
   </div>
-  
+</div>
+
+<div class="modal fade" id="modal{{ slot[0] }}" tabindex="-1" aria-labelledby="modalLabel{{ slot[0] }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" action="{{ url_for('book_slot') }}" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel{{ slot[0] }}">Book: {{ slot[1] }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="exam_name" value="{{ slot[1] }}">
+        <input type="hidden" name="exam_date" value="{{ slot[2] }}">
+        <input type="hidden" name="exam_time" value="{{ slot[3] }}">
+        <div class="mb-3"><label class="form-label">Your Name:</label><input type="text" class="form-control" name="name" required></div>
+        <div class="mb-3"><label class="form-label">Email:</label><input type="email" class="form-control" name="email" required></div>
+        <div class="mb-3"><label class="form-label">Mobile:</label><input type="text" class="form-control" name="mobile" required pattern="^\d{10}$" title="Please enter a 10-digit mobile number"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success w-100">Confirm Booking</button>
+      </div>
+    </form>
+  </div>
+</div>
