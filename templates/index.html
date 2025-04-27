@@ -42,7 +42,7 @@
   <!-- 📌 Ongoing Exam Slots -->
   <div class="collapse" id="ongoingSlots">
     {% if predefined_slots %}
-    <section class="mb-5">
+    <section class="mb-4">
         <h2 class="mb-4 text-center">📌 Ongoing Exam Slots</h2>
         <div class="row">
             {% for slot in predefined_slots %}
@@ -53,12 +53,13 @@
     {% endif %}
   </div>
 
-  <!-- 🎯 Custom Form -->
-  <section class="d-flex justify-content-center">
-      <div class="w-100" style="max-width: 900px;">
-          {% include 'components/custom_form.html' %}
-      </div>
-  </section>
+ <!-- 🎯 Custom Form -->
+<section class="d-flex justify-content-center my-5">
+  <div class="w-100" style="max-width: 900px;">
+      {% include 'components/custom_form.html' %}
+  </div>
+</section>
+
 
 </div>
 {% endblock %}
