@@ -1,29 +1,56 @@
 <section class="custom-form-section text-center">
   <h2 class="mb-4">🎯 Book a Custom Slot</h2>
 
-  <form action="{{ url_for('book_slot') }}" method="POST" class="row g-3 justify-content-center">
+  <form action="{{ url_for('book_slot') }}" method="POST" class="row g-3 justify-content-center" id="slotForm">
 
+    <!-- Service Type Dropdown -->
+    <div class="col-12 col-sm-6 col-md-5">
+      <div class="input-group">
+        <span class="input-group-text">📚</span>
+        <select class="form-select" name="service_type" id="service_type" required>
+          <option value="">Select Service Type</option>
+          <option value="Exam">Exam</option>
+          <option value="Certification">Certification</option>
+          <option value="Interview Support">Interview Support</option>
+          <option value="Work Support">Work Support</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Service/Exam Name -->
     <div class="col-12 col-sm-6 col-md-5">
       <div class="input-group">
         <span class="input-group-text">📝</span>
-        <input type="text" class="form-control" name="exam_name" placeholder="Enter Exam Name" required>
+        <input type="text" class="form-control" name="service_name" placeholder="Enter Service/Exam Name" required>
       </div>
     </div>
 
+    <!-- Description -->
+    <div class="col-12 col-sm-6 col-md-5">
+      <div class="input-group">
+        <span class="input-group-text">🗒️</span>
+        <textarea class="form-control" name="description" placeholder="Enter Description (optional)" rows="2"></textarea>
+      </div>
+    </div>
+
+    <!-- Service Date -->
     <div class="col-12 col-sm-6 col-md-5">
       <div class="input-group">
         <span class="input-group-text">📅</span>
-        <input type="date" class="form-control" name="exam_date" required>
+        <input type="date" class="form-control" name="service_date" id="service_date">
       </div>
     </div>
 
+    <!-- Service Time -->
     <div class="col-12 col-sm-6 col-md-5">
       <div class="input-group">
         <span class="input-group-text">⏰</span>
-        <input type="time" class="form-control" name="exam_time" required>
+        <input type="time" class="form-control" name="service_time" id="service_time">
       </div>
     </div>
 
+    <!-- Name -->
     <div class="col-12 col-sm-6 col-md-5">
       <div class="input-group">
         <span class="input-group-text">👤</span>
@@ -31,6 +58,7 @@
       </div>
     </div>
 
+    <!-- Email -->
     <div class="col-12 col-sm-6 col-md-5">
       <div class="input-group">
         <span class="input-group-text">📧</span>
@@ -38,6 +66,7 @@
       </div>
     </div>
 
+    <!-- Mobile -->
     <div class="col-12 col-sm-6 col-md-5">
       <div class="input-group">
         <span class="input-group-text">📱</span>
@@ -45,9 +74,27 @@
       </div>
     </div>
 
+    <!-- Submit Button -->
     <div class="col-12">
       <button type="submit" class="btn btn-primary px-4 py-2 mt-2">🚀 Book Custom Slot</button>
     </div>
 
   </form>
 </section>
+
+<!-- Dynamic Field Requirement Script -->
+<script>
+document.getElementById('service_type').addEventListener('change', function() {
+  const serviceType = this.value;
+  const dateField = document.getElementById('service_date');
+  const timeField = document.getElementById('service_time');
+
+  if (serviceType === 'Exam' || serviceType === 'Interview Support') {
+    dateField.setAttribute('required', 'required');
+    timeField.setAttribute('required', 'required');
+  } else {
+    dateField.removeAttribute('required');
+    timeField.removeAttribute('required');
+  }
+});
+</script>

@@ -2,15 +2,15 @@
 {% block title %}Book Exam Slot{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
+<div class="container mt-5 mb-5">
 
   <!-- Header + Track -->
-  <div class="row align-items-center mb-4">
+  <div class="row align-items-center mb-5">
     <div class="col-md-8 text-center text-md-start">
-        <h1 class="mb-0">📘 Book Your Exam/Interview Slot</h1>
+      <h1 class="fw-bold mb-2">📘 Book Your Service Slot</h1>
     </div>
-    <div class="col-md-4 text-md-end text-center mt-3 mt-md-0 d-flex justify-content-center justify-content-md-end gap-2">
-        <button class="btn btn-info px-4 py-2" data-bs-toggle="collapse" data-bs-target="#trackSlotForm" aria-expanded="false" aria-controls="trackSlotForm">
+    <div class="col-md-4 d-flex justify-content-center justify-content-md-end gap-2">
+        <button class="btn btn-info px-4 py-2 rounded-pill" data-bs-toggle="collapse" data-bs-target="#trackSlotForm" aria-expanded="false" aria-controls="trackSlotForm">
             🔍 Track Your Slot
         </button>
     </div>
@@ -25,15 +25,15 @@
   <!-- 🔍 Track Your Slot Form -->
   <div class="collapse mb-5" id="trackSlotForm">
     <form action="{{ url_for('search_slots') }}" method="get" class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
-      <input type="text" class="form-control" name="query" placeholder="Enter Mobile or Email" required style="max-width: 300px;">
-      <button type="submit" class="btn btn-primary">Search</button>
+      <input type="text" class="form-control rounded-4" name="query" placeholder="Enter Mobile or Email" required style="max-width: 300px;">
+      <button type="submit" class="btn btn-primary rounded-4 px-4">Search</button>
     </form>
   </div>
 
-  <!-- 📌 View Ongoing Exam Slots Button -->
+  <!-- 📌 View Ongoing Slots Button -->
   <div class="text-center my-5">
-    <button class="btn btn-outline-primary px-4 py-2 fw-semibold" data-bs-toggle="collapse" data-bs-target="#ongoingSlots" aria-expanded="false" aria-controls="ongoingSlots">
-      📌 View Ongoing Exam Slots
+    <button class="btn btn-outline-primary fw-semibold rounded-pill px-5 py-2" data-bs-toggle="collapse" data-bs-target="#ongoingSlots" aria-expanded="false" aria-controls="ongoingSlots">
+      📌 View Ongoing Service Slots
     </button>
   </div>
 
@@ -41,7 +41,7 @@
   <div class="collapse" id="ongoingSlots">
     {% if predefined_slots %}
     <section class="mb-5">
-        <h2 class="mb-4 text-center">📌 Ongoing Exam Slots</h2>
+      <h2 class="text-center mb-4">📌 Ongoing Service Slots</h2>
         <div class="row g-4">
             {% for slot in predefined_slots %}
                 {% include 'components/slot_card.html' with context %}
@@ -57,5 +57,6 @@
       {% include 'components/custom_form.html' %}
   </div>
 </section>
+
 </div>
 {% endblock %}

@@ -23,42 +23,48 @@
     {% if results %}
         <div class="row g-3">
             {% for slot in results %}
-                {% if slot[9] != 'deleted' %}
+                {% if slot['status'] != 'deleted' %}
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column justify-content-between">
 
                             <div>
                                 <div class="mb-2">
-                                    <small class="text-muted">ID: #<strong>{{ slot[0] }}</strong></small>
+                                    <small class="text-muted">ID: #<strong>{{ slot['id'] }}</strong></small>
                                 </div>
-
-                                <h6 class="card-title">{{ slot[4] }}</h6>
-
+                                <small class="badge bg-info text-dark mb-2">{{ slot['service_type'] }}</small>
+                                <h6 class="card-title">{{ slot['service_name'] }}</h6>
                                 <p class="card-text small mb-1">
-                                    <strong>By:</strong> {{ slot[1] }}<br>
-                                    <strong>📱</strong> {{ slot[2] }}<br>
-                                    <strong>📧</strong> {{ slot[3] }}<br>
-                                    <strong>Date:</strong> {{ slot[5] }}<br>
-                                    <strong>Time:</strong> {{ slot[6] }}
+                                    <strong>By:</strong> {{ slot['name'] }}<br>
+                                    <strong>📱</strong> {{ slot['mobile'] }}<br>
+                                    <strong>📧</strong> {{ slot['email'] }}<br>
+                                    {% if slot['service_date'] %}
+                                        <strong>📅 Date:</strong> {{ slot['service_date'] }}<br>
+                                    {% endif %}
+                                    {% if slot['service_time'] %}
+                                        <strong>⏰ Time:</strong> {{ slot['service_time'] }}<br>
+                                    {% endif %}
+                                    {% if slot['description'] %}
+                                        <strong>📝 Description:</strong> {{ slot['description'] }}
+                                    {% endif %}
                                 </p>
 
-                                {% if slot[9] == 'completed' %}
+                                {% if slot['status'] == 'completed' %}
                                     <div class="badge bg-success mb-2">✅ Completed</div>
                                 {% endif %}
                                 
-                                {% if slot[7] == 'PAID' %}
-                                    <p class="text-success mb-0">₹{{ slot[8] }} Paid</p>
+                                {% if slot['payment_status'] == 'PAID' %}
+                                    <p class="text-success mb-0">₹{{ slot['paid_amount'] or '0.00' }} Paid</p>
                                 {% else %}
-                                    <p class="text-danger mb-0">Unpaid</p>
+                                <p class="text-danger fw-bold fs-5 mb-0">❗ UNPAID</p>
                                 {% endif %}
                             </div>
 
-                            {% if slot[7] == 'UNPAID' %}
-                                <button class="btn btn-success mt-3 btn-sm" data-bs-toggle="modal" data-bs-target="#payModal{{ slot[0] }}">
+                            {% if slot['payment_status'] == 'UNPAID' %}
+                                <button class="btn btn-success mt-3 btn-sm" data-bs-toggle="modal" data-bs-target="#payModal{{ slot['id'] }}">
                                     💳 Pay
                                 </button>
-                            {% elif slot[7] == 'PAID' %}
+                            {% elif slot['payment_status'] == 'PAID' %}
                                 <button class="btn btn-secondary mt-3 btn-sm" disabled>✅ Paid</button>
                             {% endif %}
 

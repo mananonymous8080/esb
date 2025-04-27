@@ -92,43 +92,71 @@
     {% endif %}
   {% endwith %}
 
-  <h4 class="mb-3 text-center">➕ Add Predefined Exam Slot</h4>
+  <h4 class="mb-3 text-center">➕ Add Predefined Slot</h4>
   <div class="d-flex justify-content-center">
-      <form action="{{ url_for('add_predefined') }}" method="POST" class="mb-5 w-100" style="max-width: 800px;">
+      <form action="{{ url_for('add_predefined') }}" method="POST" class="mb-5 w-100" style="max-width: 900px;">
           <div class="row g-3">
-              <div class="col-12 col-md-4">
-                  <input type="text" name="exam_name" class="form-control" placeholder="Exam Name" required>
+              <div class="col-12 col-md-3">
+                  <select name="service_type" class="form-select" required>
+                      <option value="" disabled selected>Select Service Type</option>
+                      <option value="Exam">Exam</option>
+                      <option value="Certification">Certification</option>
+                      <option value="Interview Support">Interview Support</option>
+                      <option value="Work Support">Work Support</option>
+                      <option value="Other">Other</option>
+                  </select>
               </div>
-              <div class="col-6 col-md-3">
-                  <input type="date" name="exam_date" class="form-control" required>
+              <div class="col-12 col-md-3">
+                  <input type="text" name="service_name" class="form-control" placeholder="Service Name" required>
               </div>
-              <div class="col-6 col-md-3">
-                  <input type="time" name="exam_time" class="form-control" required>
+              <div class="col-12 col-md-3">
+                  <input type="text" name="description" class="form-control" placeholder="(Optional) Description">
               </div>
-              <div class="col-12 col-md-2">
-                  <button type="submit" class="btn btn-primary w-100">Add Slot</button>
+              <div class="col-6 col-md-1">
+                  <input type="date" name="service_date" class="form-control" placeholder="Date">
+              </div>
+              <div class="col-6 col-md-1">
+                  <input type="time" name="service_time" class="form-control" placeholder="Time">
+              </div>
+              <div class="col-12 col-md-1">
+                  <button type="submit" class="btn btn-primary w-100">Add</button>
               </div>
           </div>
       </form>
   </div>
+  
 
-  <!-- Predefined Slots -->
-  <h5 class="mb-3">📌 Predefined Exam Slots</h5>
-  <div class="row g-3">
+<!-- Predefined Slots List -->
+<h5 class="mb-3">📌 Predefined Slots</h5>
+<div class="row g-3">
     {% for slot in predefined_slots %}
     <div class="col-6 col-md-4 col-lg-3">
       <div class="card h-100">
         <div class="card-body d-flex flex-column justify-content-between">
           <div>
-            <h6 class="card-title fw-bold">{{ slot[1] }}</h6>
-            <p class="card-text text-muted small">{{ slot[2] }} at {{ slot[3] }}</p>
+            <h6 class="card-title fw-bold">🏷️ {{ slot['service_type'] }}</h6>
+            <p class="card-text text-muted small">
+                🎯: <strong>{{ slot['service_name'] }}</strong><br>
+                {% if slot['service_date'] %}
+                    📅: {{ slot['service_date'] }}
+                    {% if slot['service_time'] %}
+                        at {{ slot['service_time'] }}
+                    {% endif %}
+                {% else %}
+                    📅: Flexible Date
+                {% endif %}
+            </p>
+            {% if slot['description'] %}
+            <p class="small text-secondary">📝: {{ slot['description'] }}</p>
+            {% endif %}
           </div>
-          <a href="{{ url_for('delete_predefined', slot_id=slot[0]) }}" class="btn btn-sm btn-outline-danger mt-2">🗑️ Delete</a>
+          <a href="{{ url_for('delete_predefined', slot_id=slot['id']) }}" class="btn btn-sm btn-outline-danger mt-2">🗑️ Delete</a>
         </div>
       </div>
     </div>
     {% endfor %}
-  </div>
+</div>
+
 
   <hr class="my-3">
 
@@ -136,72 +164,100 @@
   <h5 class="mb-3">🗓️ Booked Slots</h5>
 
   <!-- Filters -->
-  <div class="card mb-4">
+<div class="card mb-4">
     <div class="card-body">
       <div class="row g-2">
-        <div class="col-6 col-md-2"><select class="form-select" id="filterPayment"><option value="">All Payments</option><option value="PAID">Paid</option><option value="UNPAID">Unpaid</option></select></div>
-        <div class="col-6 col-md-2"><input type="date" class="form-control" id="filterDate"></div>
-        <div class="col-6 col-md-2"><input type="text" class="form-control" id="filterExam" placeholder="Exam Name"></div>
-        <div class="col-6 col-md-2"><input type="text" class="form-control" id="filterName" placeholder="Name"></div>
-        <div class="col-6 col-md-2"><input type="text" class="form-control" id="filterMobile" placeholder="Mobile"></div>
-        <div class="col-6 col-md-2"><button class="btn btn-primary w-100" onclick="applyFilters()">🔍 Filter</button></div>
+        <div class="col-6 col-md-2">
+          <select class="form-select" id="filterServiceType">
+            <option value="">All Services</option>
+            <option value="Exam">Exam</option>
+            <option value="Certification">Certification</option>
+            <option value="Interview Support">Interview Support</option>
+            <option value="Work Support">Work Support</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <input type="date" class="form-control" id="filterDate">
+        </div>
+        <div class="col-6 col-md-2">
+          <input type="text" class="form-control" id="filterServiceName" placeholder="Service Name">
+        </div>
+        <div class="col-6 col-md-2">
+          <input type="text" class="form-control" id="filterName" placeholder="Name">
+        </div>
+        <div class="col-6 col-md-2">
+          <input type="text" class="form-control" id="filterMobile" placeholder="Mobile">
+        </div>
+        <div class="col-6 col-md-2">
+          <input type="text" class="form-control" id="filterEmail" placeholder="Email">
+        </div>
+        <div class="col-12 col-md-2 mt-2 mt-md-0">
+          <button class="btn btn-primary w-100" onclick="applyFilters()">🔍 Filter</button>
+        </div>
       </div>
     </div>
   </div>
+  
 
   <!-- Booked Slots Cards -->
   <div class="row g-3">
     {% for slot in booked_slots %}
     <div class="col-6 col-md-4 col-lg-3 booked-slot"
-         data-payment="{{ slot[7] }}"
-         data-date="{{ slot[5] }}"
-         data-exam="{{ slot[4]|lower }}"
-         data-name="{{ slot[1]|lower }}"
-         data-mobile="{{ slot[2] }}">
-      <div class="card h-100 position-relative {% if slot[7] == 'PAID' %}paid{% else %}unpaid{% endif %}">
+    data-service-type="{{ slot['service_type']|lower }}"
+    data-service-date="{{ slot['service_date'] }}"
+    data-service-name="{{ slot['service_name']|lower }}"
+    data-name="{{ slot['name']|lower }}"
+    data-mobile="{{ slot['mobile'] }}"
+    data-email="{{ slot['email']|lower }}"
+    data-payment="{{ slot['payment_status'] }}">
+      <div class="card h-100 position-relative {% if slot['payment_status'] == 'PAID' %}paid{% else %}unpaid{% endif %}">
         <div class="card-body d-flex flex-column justify-content-between">
-
+  
           <!-- Mark Paid Button -->
-          {% if slot[7] != 'PAID' %}
+          {% if slot['payment_status'] != 'PAID' %}
           <div class="position-absolute top-0 end-0 m-2">
             <form action="{{ url_for('mark_as_paid') }}" method="POST" class="d-inline">
-              <input type="hidden" name="slot_id" value="{{ slot[0] }}">
+              <input type="hidden" name="slot_id" value="{{ slot['id'] }}">
               <button type="button" class="btn mark-paid-btn" onclick="showPaymentPrompt(this)" title="Mark as Paid">✅</button>
             </form>
           </div>
           {% endif %}
-
+  
           <div>
-            <h6 class="card-title fw-bold">{{ slot[4] }}</h6>
+            <h6 class="card-title fw-bold">{{ slot['service_type'] }}</h6>
             <p class="card-text small text-muted mb-2">
-              <strong>By:</strong> {{ slot[1] }}<br>
-              <strong>📱</strong> {{ slot[2] }}<br>
-              <strong>📧</strong> {{ slot[3] }}<br>
-              <strong>Date:</strong> {{ slot[5] }}<br>
-              <strong>Time:</strong> {{ slot[6] }}<br>
+               🎯: <strong>{{ slot['service_name'] }}</strong><br>
+              <strong>👤:</strong> {{ slot['name'] }}<br>
+              <strong>📱:</strong> {{ slot['mobile'] }}<br>
+              <strong>📧:</strong> {{ slot['email'] }}<br>
+              <strong>📅:</strong> {{ slot['service_date'] }}<br>
+              <strong>⏰:</strong> {{ slot['service_time'] }}<br>
+              <strong>📝:</strong> {{ slot['description'] }}<br>
               <strong>Payment:</strong>
-              {% if slot[7] == 'PAID' %}
-                <span class="text-success fw-semibold">✅ ₹{{ slot[8] }}</span>
+              {% if slot['payment_status'] == 'PAID' %}
+                <span class="text-success fw-semibold">✅ ₹{{ slot['paid_amount'] }}</span>
               {% else %}
                 <span class="text-danger fw-semibold">❌ Unpaid</span>
               {% endif %}
             </p>
           </div>
-
-        {% if slot[7] == 'PAID' %}
-            <form action="{{ url_for('mark_as_done') }}" method="POST" class="mt-2">
-                <input type="hidden" name="slot_id" value="{{ slot[0] }}">
-                <button type="submit" class="btn btn-sm btn-success w-100">✅ Done</button>
-            </form>
-        {% else %}
-            <a href="#" onclick="confirmDelete('{{ url_for('delete_slot', slot_id=slot[0]) }}')" class="btn btn-sm btn-outline-danger mt-2">🗑️ Delete</a>
-        {% endif %}
-
+  
+          {% if slot['payment_status'] == 'PAID' %}
+              <form action="{{ url_for('mark_as_done') }}" method="POST" class="mt-2">
+                  <input type="hidden" name="slot_id" value="{{ slot['id'] }}">
+                  <button type="submit" class="btn btn-sm btn-success w-100">✅ Done</button>
+              </form>
+          {% else %}
+              <a href="#" onclick="confirmDelete('{{ url_for('delete_slot', slot_id=slot['id']) }}')" class="btn btn-sm btn-outline-danger mt-2">🗑️ Delete</a>
+          {% endif %}
+  
         </div>
       </div>
     </div>
     {% endfor %}
   </div>
+  
 
 </div>
 
@@ -227,23 +283,34 @@
 
   // Filter Function
   function applyFilters() {
-    const payment = document.getElementById('filterPayment').value;
-    const date = document.getElementById('filterDate').value;
-    const exam = document.getElementById('filterExam').value.toLowerCase();
-    const name = document.getElementById('filterName').value.toLowerCase();
-    const mobile = document.getElementById('filterMobile').value;
-    const cards = document.querySelectorAll('.booked-slot');
+  const serviceType = document.getElementById('filterServiceType').value.toLowerCase();
+  const date = document.getElementById('filterDate').value;
+  const serviceName = document.getElementById('filterServiceName').value.toLowerCase();
+  const name = document.getElementById('filterName').value.toLowerCase();
+  const mobile = document.getElementById('filterMobile').value;
+  const email = document.getElementById('filterEmail').value.toLowerCase();
+  
+  const cards = document.querySelectorAll('.booked-slot');
 
-    cards.forEach(card => {
-      const matchesPayment = !payment || card.dataset.payment === payment;
-      const matchesDate = !date || card.dataset.date === date;
-      const matchesExam = !exam || card.dataset.exam.includes(exam);
-      const matchesName = !name || card.dataset.name.includes(name);
-      const matchesMobile = !mobile || card.dataset.mobile.includes(mobile);
+  cards.forEach(card => {
+    const cardServiceType = card.dataset.serviceType?.toLowerCase() || '';
+    const cardDate = card.dataset.serviceDate || '';
+    const cardServiceName = card.dataset.serviceName?.toLowerCase() || '';
+    const cardName = card.dataset.name?.toLowerCase() || '';
+    const cardMobile = card.dataset.mobile || '';
+    const cardEmail = card.dataset.email?.toLowerCase() || '';
 
-      card.style.display = (matchesPayment && matchesDate && matchesExam && matchesName && matchesMobile) ? '' : 'none';
-    });
-  }
+    const matchesServiceType = !serviceType || cardServiceType.includes(serviceType);
+    const matchesDate = !date || cardDate === date;
+    const matchesServiceName = !serviceName || cardServiceName.includes(serviceName);
+    const matchesName = !name || cardName.includes(name);
+    const matchesMobile = !mobile || cardMobile.includes(mobile);
+    const matchesEmail = !email || cardEmail.includes(email);
+
+    card.style.display = (matchesServiceType && matchesDate && matchesServiceName && matchesName && matchesMobile && matchesEmail) ? '' : 'none';
+  });
+}
+
 
   function confirmDelete(url) {
   if (confirm('Are you sure you want to delete this UNPAID slot?')) {
