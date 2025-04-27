@@ -2,7 +2,7 @@
 {% block title %}Book Exam Slot{% endblock %}
 
 {% block content %}
-<div class="container mt-3 mb-5">
+<div class="container mt-4 mb-5">
 
   <!-- Header + Track -->
   <div class="row align-items-center mb-4">
@@ -10,13 +10,11 @@
         <h1 class="mb-0">📘 Book Your Exam/Interview Slot</h1>
     </div>
     <div class="col-md-4 text-md-end text-center mt-3 mt-md-0 d-flex justify-content-center justify-content-md-end gap-2">
-        <button class="btn btn-info px-3 py-2" data-bs-toggle="collapse" data-bs-target="#trackSlotForm" aria-expanded="false" aria-controls="trackSlotForm">
+        <button class="btn btn-info px-4 py-2" data-bs-toggle="collapse" data-bs-target="#trackSlotForm" aria-expanded="false" aria-controls="trackSlotForm">
             🔍 Track Your Slot
         </button>
     </div>
   </div>
-
- 
 
   {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -42,9 +40,9 @@
   <!-- 📌 Ongoing Exam Slots -->
   <div class="collapse" id="ongoingSlots">
     {% if predefined_slots %}
-    <section class="mb-4">
+    <section class="mb-5">
         <h2 class="mb-4 text-center">📌 Ongoing Exam Slots</h2>
-        <div class="row">
+        <div class="row g-4">
             {% for slot in predefined_slots %}
                 {% include 'components/slot_card.html' with context %}
             {% endfor %}
@@ -59,7 +57,5 @@
       {% include 'components/custom_form.html' %}
   </div>
 </section>
-
-
 </div>
 {% endblock %}
