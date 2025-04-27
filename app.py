@@ -36,35 +36,81 @@ def get_connection():
 @app.route('/')
 def index():
     conn = get_connection()
-    cur = conn.cursor()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute("SELECT * FROM predefined_slots")
     predefined_slots = cur.fetchall()
     cur.close()
     conn.close()
     return render_template('index.html', predefined_slots=predefined_slots)
 
+# @app.route('/book', methods=['POST'])
+# def book_slot():
+#     name = request.form.get('name')
+#     mobile = request.form.get('mobile')
+#     email = request.form.get('email')
+#     exam_name = request.form.get('exam_name')
+#     exam_date = request.form.get('exam_date')
+#     exam_time = request.form.get('exam_time')
+
+#     conn = get_connection()
+#     cur = conn.cursor()
+#     query = "INSERT INTO slots (name, mobile, email, exam_name, exam_date, exam_time) VALUES (%s, %s, %s, %s, %s, %s)"
+#     cur.execute(query, (name, mobile, email, exam_name, exam_date, exam_time))
+#     conn.commit()
+#     cur.close()
+#     conn.close()
+
+#     # ✅ Send email after booking
+#     send_booking_email(name, email, mobile, exam_name, exam_date, exam_time)
+    
+#     flash("Slot registered successfully. Do payment for confirmation! We will connect with you shortly.")
+#     return redirect(url_for('search_slots', query=mobile or email))
+
+
 @app.route('/book', methods=['POST'])
 def book_slot():
-    name = request.form.get('name')
-    mobile = request.form.get('mobile')
-    email = request.form.get('email')
-    exam_name = request.form.get('exam_name')
-    exam_date = request.form.get('exam_date')
-    exam_time = request.form.get('exam_time')
+    # Collect all fields cleanly
+    data = {
+        'name': request.form.get('name'),
+        'mobile': request.form.get('mobile'),
+        'email': request.form.get('email'),
+        'service_type': request.form.get('service_type'),
+        'service_name': request.form.get('service_name'),
+        'description': request.form.get('description') or '',
+        'service_date': request.form.get('service_date') or None,
+        'service_time': request.form.get('service_time') or None
+    }
 
+    # Database insert
     conn = get_connection()
     cur = conn.cursor()
-    query = "INSERT INTO slots (name, mobile, email, exam_name, exam_date, exam_time) VALUES (%s, %s, %s, %s, %s, %s)"
-    cur.execute(query, (name, mobile, email, exam_name, exam_date, exam_time))
+    
+    query = """
+        INSERT INTO slots 
+        (name, mobile, email, service_type, service_name, description, service_date, service_time)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    """
+    cur.execute(query, tuple(data.values()))
+    
     conn.commit()
     cur.close()
     conn.close()
 
     # ✅ Send email after booking
-    send_booking_email(name, email, mobile, exam_name, exam_date, exam_time)
+    # send_booking_email(
+    #     name=data['name'],
+    #     email=data['email'],
+    #     mobile=data['mobile'],
+    #     service_type=data['service_type'],
+    #     service_name=data['service_name'],
+    #     service_date=data['service_date'],
+    #     service_time=data['service_time'],
+    #     description=data['description']
+    # )
     
-    flash("Slot registered successfully. Do payment for confirmation! We will connect with you shortly.")
-    return redirect(url_for('search_slots', query=mobile or email))
+    flash("Slot registered successfully! 🚀 Please complete payment for confirmation. We'll contact you soon.")
+    return redirect(url_for('search_slots', query=data['mobile'] or data['email']))
+
 
 
 
@@ -72,7 +118,7 @@ def book_slot():
 def search_slots():
     query = request.args.get('query')
     conn = get_connection()
-    cur = conn.cursor()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
     
     cur.execute("""
         SELECT * FROM slots 
@@ -111,6 +157,7 @@ def admin_login():
             flash("Incorrect admin password.")
     return render_template('admin_login.html')
 
+
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if not session.get('is_admin'):
@@ -118,7 +165,7 @@ def admin_dashboard():
         return redirect(url_for('admin_login'))
 
     conn = get_connection()
-    cur = conn.cursor()
+    cur = conn.cursor(pymysql.cursors.DictCursor)  
     cur.execute("SELECT * FROM slots WHERE status IS NULL OR status = ''")
     booked_slots = cur.fetchall()
     cur.execute("SELECT * FROM predefined_slots")
@@ -127,11 +174,7 @@ def admin_dashboard():
     conn.close()
     return render_template('admin.html', booked_slots=booked_slots, predefined_slots=predefined_slots)
 
-@app.route('/admin/logout')
-def admin_logout():
-    session.pop('is_admin', None)
-    flash("Logged out successfully.")
-    return redirect(url_for('index'))
+
 
 @app.route('/admin/add_predefined', methods=['POST'])
 def add_predefined():
@@ -139,19 +182,25 @@ def add_predefined():
         flash("Access denied.")
         return redirect(url_for('admin_login'))
 
-    exam_name = request.form.get('exam_name')
-    exam_date = request.form.get('exam_date')
-    exam_time = request.form.get('exam_time')
+    service_type = request.form.get('service_type')
+    service_name = request.form.get('service_name')
+    service_date = request.form.get('service_date') or None
+    service_time = request.form.get('service_time') or None
+    description = request.form.get('description') or None
 
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO predefined_slots (exam_name, exam_date, exam_time) VALUES (%s, %s, %s)",
-                (exam_name, exam_date, exam_time))
+    cur.execute("""
+        INSERT INTO predefined_slots (service_type, service_name, service_date, service_time, description)
+        VALUES (%s, %s, %s, %s, %s)
+    """, (service_type, service_name, service_date, service_time, description))
     conn.commit()
     cur.close()
     conn.close()
+
     flash("Predefined slot added successfully.")
     return redirect(url_for('admin_dashboard'))
+
 
 @app.route('/admin/delete_slot/<int:slot_id>')
 def delete_slot(slot_id):
@@ -221,7 +270,11 @@ def mark_as_done():
     flash("Slot marked as done and moved to Completed  successfully.")
     return redirect(url_for('admin_dashboard'))
 
-
+@app.route('/admin/logout')
+def admin_logout():
+    session.pop('is_admin', None)
+    flash("Logged out successfully.")
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -114,3 +114,18 @@ button:hover {
         max-width: 100%;
     }
 }
+
+.btn-gradient-primary {
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    border: none;
+    color: white;
+    font-weight: bold;
+    transition: background 0.5s;
+    border-radius: 30px;
+  }
+  
+  .btn-gradient-primary:hover {
+    background: linear-gradient(to right, #00f2fe, #4facfe);
+    color: white;
+  }
+  
