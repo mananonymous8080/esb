@@ -1,6 +1,5 @@
 import pymysql
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from datetime import datetime
 import os
 from email_helper import send_booking_email 
 
@@ -43,28 +42,6 @@ def index():
     conn.close()
     return render_template('index.html', predefined_slots=predefined_slots)
 
-# @app.route('/book', methods=['POST'])
-# def book_slot():
-#     name = request.form.get('name')
-#     mobile = request.form.get('mobile')
-#     email = request.form.get('email')
-#     exam_name = request.form.get('exam_name')
-#     exam_date = request.form.get('exam_date')
-#     exam_time = request.form.get('exam_time')
-
-#     conn = get_connection()
-#     cur = conn.cursor()
-#     query = "INSERT INTO slots (name, mobile, email, exam_name, exam_date, exam_time) VALUES (%s, %s, %s, %s, %s, %s)"
-#     cur.execute(query, (name, mobile, email, exam_name, exam_date, exam_time))
-#     conn.commit()
-#     cur.close()
-#     conn.close()
-
-#     # ✅ Send email after booking
-#     send_booking_email(name, email, mobile, exam_name, exam_date, exam_time)
-    
-#     flash("Slot registered successfully. Do payment for confirmation! We will connect with you shortly.")
-#     return redirect(url_for('search_slots', query=mobile or email))
 
 
 @app.route('/book', methods=['POST'])
@@ -97,16 +74,16 @@ def book_slot():
     conn.close()
 
     # ✅ Send email after booking
-    # send_booking_email(
-    #     name=data['name'],
-    #     email=data['email'],
-    #     mobile=data['mobile'],
-    #     service_type=data['service_type'],
-    #     service_name=data['service_name'],
-    #     service_date=data['service_date'],
-    #     service_time=data['service_time'],
-    #     description=data['description']
-    # )
+    send_booking_email(
+        name=data['name'],
+        email=data['email'],
+        mobile=data['mobile'],
+        service_type=data['service_type'],
+        service_name=data['service_name'],
+        service_date=data['service_date'],
+        service_time=data['service_time'],
+        description=data['description']
+    )
     
     flash("Slot registered successfully! 🚀 Please complete payment for confirmation. We'll contact you soon.")
     return redirect(url_for('search_slots', query=data['mobile'] or data['email']))
@@ -130,8 +107,6 @@ def search_slots():
     conn.close()
 
     return render_template('search_results.html', results=results, query=query, upi_id=UPI_ID)
-
-
 
 
 
