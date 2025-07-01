@@ -54,6 +54,14 @@ def index():
 
 @app.route('/book', methods=['POST'])
 def book_slot():
+    user_agent = request.headers.get('User-Agent', '')
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+
+    # Detect and block bots using curl or Python
+    if "python" in user_agent.lower() or "curl" in user_agent.lower():
+        print(f"[BLOCKED] | IP: {ip} | User-Agent: {user_agent}")
+        return "Denied", 403
+
     if request.form.get("website"):
     # Bot likely filled hidden field
         flash("Bot detected. Submission rejected.", "danger")
