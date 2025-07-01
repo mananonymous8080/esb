@@ -53,7 +53,7 @@ def index():
 
 
 
-@app.route('/book', methods=['POST'])
+@app.route('/book_slot', methods=['POST'])
 def book_slot():
     # Step 0: Honeypot check
     if request.form.get("website"):
