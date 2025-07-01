@@ -2,6 +2,7 @@ import pymysql
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import os
 from email_helper import send_booking_email 
+import random
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Needed for flash and session
@@ -34,18 +35,36 @@ def get_connection():
 
 @app.route('/')
 def index():
+    num1 = random.randint(1, 10)
+    num2 = random.randint(1, 10)
+    expected_sum = num1 + num2
     conn = get_connection()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute("SELECT * FROM predefined_slots")
     predefined_slots = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('index.html', predefined_slots=predefined_slots)
+    return render_template('index.html',
+                            predefined_slots=predefined_slots,
+                            num1=num1, 
+                            num2=num2, 
+                            expected_sum=expected_sum)
 
 
 
 @app.route('/book', methods=['POST'])
 def book_slot():
+    # === CAPTCHA check ===
+    user_answer = request.form.get("captcha_answer")
+    expected_sum = request.form.get("captcha_sum")
+    
+    try:
+        if int(user_answer) != int(expected_sum):
+            flash("Incorrect answer to the math question. Please try again.", "danger")
+            return redirect(request.referrer)
+    except:
+        flash("Invalid CAPTCHA input. Please try again.", "danger")
+        return redirect(request.referrer)
     # Collect all fields cleanly
     data = {
         'name': request.form.get('name'),
@@ -253,3 +272,5 @@ def admin_logout():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+

@@ -74,6 +74,31 @@
       </div>
     </div>
 
+    <!-- Math CAPTCHA -->
+    <div class="col-12 col-sm-6 col-md-5">
+      <div class="input-group">
+        <span class="input-group-text">🧮</span>
+        
+        <!-- The math question stays visible -->
+        <span class="input-group-text fw-semibold">
+          {{ num1 }} + {{ num2 }} =
+        </span>
+
+        <!-- User types answer here -->
+        <input  type="number"
+                class="form-control"
+                name="captcha_answer"
+                aria-label="Answer"
+                placeholder="?"
+                min="0"
+                required>
+
+        <!-- Hidden field with the expected sum -->
+        <input type="hidden" name="captcha_sum" value="{{ expected_sum }}">
+      </div>
+    </div>
+
+
     <!-- Submit Button -->
     <div class="col-12">
       <button type="submit" class="btn btn-primary px-4 py-2 mt-2">🚀 Book Custom Slot</button>
