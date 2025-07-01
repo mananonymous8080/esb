@@ -54,6 +54,11 @@ def index():
 
 @app.route('/book', methods=['POST'])
 def book_slot():
+    if request.form.get("website"):
+    # Bot likely filled hidden field
+        flash("Bot detected. Submission rejected.", "danger")
+        return redirect(request.referrer)
+
     # === CAPTCHA check ===
     user_answer = request.form.get("captcha_answer")
     expected_sum = request.form.get("captcha_sum")
