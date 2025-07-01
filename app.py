@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import os
 from email_helper import send_booking_email 
 import random
+import re
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Needed for flash and session
@@ -54,35 +55,56 @@ def index():
 
 @app.route('/book', methods=['POST'])
 def book_slot():
+    # Step 0: Honeypot check
+    if request.form.get("website"):
+    # Bot likely filled hidden field
+        print(f"[BOT BLOCKED - Honeypot] | IP: {request.remote_addr}")
+        return redirect(request.referrer)
+    
+    # Step 1: User-Agent Check
     user_agent = request.headers.get('User-Agent', '')
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-
     # Detect and block bots using curl or Python
     if "python" in user_agent.lower() or "curl" in user_agent.lower():
         print(f"[BLOCKED] | IP: {ip} | User-Agent: {user_agent}")
         return "Denied", 403
 
-    if request.form.get("website"):
-    # Bot likely filled hidden field
-        flash("Bot detected. Submission rejected.", "danger")
-        return redirect(request.referrer)
 
-    # === CAPTCHA check ===
+    # Step 2: CAPTCHA check (math-based)
     user_answer = request.form.get("captcha_answer")
     expected_sum = request.form.get("captcha_sum")
-    
     try:
         if int(user_answer) != int(expected_sum):
+            print(f"[BLOCKED - Wrong CAPTCHA] | IP: {ip}")
             flash("Incorrect answer to the math question. Please try again.", "danger")
             return redirect(request.referrer)
     except:
+        print(f"[BLOCKED - Invalid CAPTCHA Input] | IP: {ip}")
         flash("Invalid CAPTCHA input. Please try again.", "danger")
         return redirect(request.referrer)
+    
+    # Step 3: Validate inputs strictly
+    mobile = request.form.get('mobile', '')
+    email = request.form.get('email', '')
+    name = request.form.get('name', '')
+    if not re.match(r"^\d{10}$", mobile):
+        print(f"[BLOCKED - Invalid Mobile] | IP: {ip} | Mobile: {mobile}")
+        flash("Invalid mobile number", "danger")
+        return redirect(request.referrer)
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        print(f"[BLOCKED - Invalid Email] | IP: {ip} | Email: {email}")
+        flash("Invalid email address", "danger")
+        return redirect(request.referrer)
+    if not name.strip():
+        print(f"[BLOCKED - Missing Name] | IP: {ip}")
+        flash("Name is required", "danger")
+        return redirect(request.referrer)
+    
     # Collect all fields cleanly
     data = {
-        'name': request.form.get('name'),
-        'mobile': request.form.get('mobile'),
-        'email': request.form.get('email'),
+        'name': name.strip(),
+        'mobile': mobile,
+        'email': email,
         'service_type': request.form.get('service_type'),
         'service_name': request.form.get('service_name'),
         'description': request.form.get('description') or '',
