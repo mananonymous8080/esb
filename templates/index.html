@@ -2,61 +2,124 @@
 {% block title %}Your Exam Helper{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
+<div class="container mt-4 mb-5">
 
-  <!-- Header + Track -->
-  <div class="row align-items-center mb-5">
-    <div class="col-md-8 text-center text-md-start">
-      <h1 class="fw-bold mb-2">📘 Book Your Service Slot</h1>
-    </div>
-    <div class="col-md-4 d-flex justify-content-center justify-content-md-end gap-2">
-        <button class="btn btn-info px-4 py-2 rounded-pill" data-bs-toggle="collapse" data-bs-target="#trackSlotForm" aria-expanded="false" aria-controls="trackSlotForm">
-            🔍 Track Your Slot
-        </button>
-    </div>
-  </div>
+  <!-- 🌟 Hero Section -->
+  <section class="text-center bg-light p-4 p-md-5 rounded-4 shadow mb-5">
+    <h1 class="fw-bold display-6 display-md-5 mb-3">Welcome to <span class="text-primary">Your Exam Helper</span></h1>
+    <p class="lead">Book time slots for exams, certifications, interviews, or work support in just a few clicks!</p>
+    <button class="btn btn-gradient-primary px-4 py-3 mt-3 w-100 w-sm-auto" onclick="showAndScrollToForm()">🚀 Book a Custom Slot</button>
+  </section>
 
+  <!-- ✅ Flash Message -->
   {% with messages = get_flashed_messages() %}
       {% if messages %}
           <script>alert("{{ messages[0] }}");</script>
       {% endif %}
   {% endwith %}
 
-  <!-- 🔍 Track Your Slot Form -->
-  <div class="collapse mb-5" id="trackSlotForm">
+  <!-- 🔍 Track Slot Section -->
+  <section class="text-center mb-5">
+    <h3 class="mb-3">Already Booked a Slot?</h3>
     <form action="{{ url_for('search_slots') }}" method="get" class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
       <input type="text" class="form-control rounded-4" name="query" placeholder="Enter Mobile or Email" required style="max-width: 300px;">
-      <button type="submit" class="btn btn-primary rounded-4 px-4">Search</button>
+      <button type="submit" class="btn btn-primary rounded-4 px-4">🔍 Track Slot</button>
     </form>
-  </div>
+  </section>
 
-  <!-- 📌 View Ongoing Slots Button -->
-  <div class="text-center my-5">
-    <button class="btn btn-outline-primary fw-semibold rounded-pill px-5 py-2" data-bs-toggle="collapse" data-bs-target="#ongoingSlots" aria-expanded="false" aria-controls="ongoingSlots">
-      📌 View Ongoing Service Slots
-    </button>
-  </div>
-
-  <!-- 📌 Ongoing Exam Slots -->
-  <div class="collapse" id="ongoingSlots">
-    {% if predefined_slots %}
-    <section class="mb-5">
-      <h2 class="text-center mb-4">📌 Ongoing Service Slots</h2>
-        <div class="row g-4">
-            {% for slot in predefined_slots %}
-                {% include 'components/slot_card.html' with context %}
-            {% endfor %}
+  <!-- 💡 Why Choose Us -->
+  <section class="mb-5">
+    <h2 class="text-center mb-4">💡 Why Choose Us</h2>
+    <div class="row text-center g-4">
+      <div class="col-12 col-md-4">
+        <div class="p-4 bg-white shadow rounded-4 h-100">
+          <h5>✅ Flexible Booking</h5>
+          <p>Choose your own date & time that fits your schedule.</p>
         </div>
-    </section>
-    {% endif %}
-  </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="p-4 bg-white shadow rounded-4 h-100">
+          <h5>🎯 Multiple Services</h5>
+          <p>Book for exams, certifications, interviews, or work support.</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="p-4 bg-white shadow rounded-4 h-100">
+          <h5>💬 Instant Confirmation</h5>
+          <p>Receive email confirmation and track your slot anytime.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
- <!-- 🎯 Custom Form -->
-<section class="d-flex justify-content-center my-5">
-  <div class="w-100" style="max-width: 900px;">
-      {% include 'components/custom_form.html' %}
+  <!-- 🔁 How It Works -->
+  <section class="mb-5">
+    <h2 class="text-center mb-4">🔁 How It Works</h2>
+    <div class="row g-4 text-center">
+      <div class="col-6 col-md-3">
+        <div class="bg-white shadow p-3 rounded-4 h-100">
+          <div class="fs-2 mb-2">1️⃣</div>
+          <h6>Choose Service</h6>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="bg-white shadow p-3 rounded-4 h-100">
+          <div class="fs-2 mb-2">2️⃣</div>
+          <h6>Fill Form</h6>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="bg-white shadow p-3 rounded-4 h-100">
+          <div class="fs-2 mb-2">3️⃣</div>
+          <h6>Get Email Confirmation</h6>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="bg-white shadow p-3 rounded-4 h-100">
+          <div class="fs-2 mb-2">4️⃣</div>
+          <h6>Join on Scheduled Time</h6>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 📌 View Ongoing Slots -->
+  {% if predefined_slots %}
+  <section class="mb-5">
+    <h2 class="text-center mb-4">📌 Ongoing Service Slots</h2>
+    <div class="text-center mb-3">
+      <button class="btn btn-outline-primary rounded-pill px-5 py-2" data-bs-toggle="collapse" data-bs-target="#ongoingSlots">
+        Show/Hide Slots
+      </button>
+    </div>
+    <div class="collapse" id="ongoingSlots">
+      <div class="row g-4">
+        {% for slot in predefined_slots %}
+            {% include 'components/slot_card.html' with context %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- 🎯 Custom Booking Form (Hidden Initially) -->
+  <div class="collapse" id="customFormSection">
+    <section class="d-flex justify-content-center mt-4">
+      <div class="w-100 px-2" style="max-width: 900px;">
+        {% include 'components/custom_form.html' %}
+      </div>
+    </section>
   </div>
-</section>
 
 </div>
+<script>
+  function showAndScrollToForm() {
+    const formSection = document.getElementById('customFormSection');
+    const bsCollapse = new bootstrap.Collapse(formSection, { toggle: false });
+    bsCollapse.show();
+    setTimeout(() => {
+      formSection.scrollIntoView({ behavior: 'smooth' });
+    }, 200);
+  }
+</script>
 {% endblock %}

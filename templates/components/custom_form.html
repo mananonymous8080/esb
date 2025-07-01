@@ -1,4 +1,5 @@
 <section class="custom-form-section text-center">
+  <div class="card p-4 shadow-lg border-0">
   <h2 class="mb-4">🎯 Book a Custom Slot</h2>
 
   <form action="{{ url_for('book_slot') }}" method="POST" class="row g-3 justify-content-center" id="slotForm">
@@ -74,29 +75,27 @@
       </div>
     </div>
 
-    <!-- Math CAPTCHA -->
-    <div class="col-12 col-sm-6 col-md-5">
-      <div class="input-group">
-        <span class="input-group-text">🧮</span>
-        
-        <!-- The math question stays visible -->
-        <span class="input-group-text fw-semibold">
-          {{ num1 }} + {{ num2 }} =
-        </span>
+  <!-- Math CAPTCHA (Improved Layout) -->
+<div class="col-12 col-sm-6 col-md-5">
+  <label class="form-label fw-semibold">🧮 Solve to verify you're human</label>
+  <div class="input-group">
+    <!-- Static math question -->
+    <span class="input-group-text">{{ num1 }} + {{ num2 }} =</span>
 
-        <!-- User types answer here -->
-        <input  type="number"
-                class="form-control"
-                name="captcha_answer"
-                aria-label="Answer"
-                placeholder="?"
-                min="0"
-                required>
+    <!-- User's answer input -->
+    <input type="number"
+           class="form-control"
+           name="captcha_answer"
+           placeholder="Answer"
+           min="0"
+           required
+           aria-label="CAPTCHA Answer">
 
-        <!-- Hidden field with the expected sum -->
-        <input type="hidden" name="captcha_sum" value="{{ expected_sum }}">
-      </div>
-    </div>
+    <!-- Hidden actual sum -->
+    <input type="hidden" name="captcha_sum" value="{{ expected_sum }}">
+  </div>
+</div>
+
 
     <!-- Honeypot field (invisible to real users) -->
 <div style="display:none;">
@@ -105,11 +104,12 @@
 
 
     <!-- Submit Button -->
-    <div class="col-12">
-      <button type="submit" class="btn btn-primary px-4 py-2 mt-2">🚀 Book Custom Slot</button>
+    <div class="col-12 mt-4">
+      <button type="submit" class="btn btn-primary px-4 py-2">🚀 Book Custom Slot</button>
     </div>
 
   </form>
+</div>
 </section>
 
 <!-- Dynamic Field Requirement Script -->
