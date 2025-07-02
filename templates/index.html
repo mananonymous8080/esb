@@ -83,24 +83,28 @@
     </div>
   </section>
 
-  <!-- 📌 View Ongoing Slots -->
-  {% if predefined_slots %}
-  <section class="mb-5">
-    <h2 class="text-center mb-4">📌 Ongoing Service Slots</h2>
-    <div class="text-center mb-3">
-      <button class="btn btn-outline-primary rounded-pill px-5 py-2" data-bs-toggle="collapse" data-bs-target="#ongoingSlots">
-        Show/Hide Slots
-      </button>
-    </div>
-    <div class="collapse" id="ongoingSlots">
-      <div class="row g-4">
-        {% for slot in predefined_slots %}
-            {% include 'components/slot_card.html' with context %}
-        {% endfor %}
+
+  <!-- 📌 Ongoing Slots Section -->
+    <section class="mb-5">
+      <h2 class="text-center mb-4">📌 Ongoing Service Slots</h2>
+      <div class="text-center mb-3">
+        <button class="btn btn-outline-primary rounded-pill px-5 py-2"
+                data-bs-toggle="collapse"
+                data-bs-target="#ongoingSlots">
+          Show/Hide Slots
+        </button>
       </div>
-    </div>
-  </section>
-  {% endif %}
+      <div class="collapse" id="ongoingSlots">
+        <div id="slotContainer" class="text-center py-4">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>          
+        </div>
+      </div>
+    </section>
+
 
   <!-- 🎯 Custom Booking Form (Hidden Initially) -->
   <div class="collapse" id="customFormSection">
@@ -121,5 +125,28 @@
       formSection.scrollIntoView({ behavior: 'smooth' });
     }, 200);
   }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    let slotsLoaded = false;
+    const ongoingSlots = document.getElementById('ongoingSlots');
+    const slotContainer = document.getElementById('slotContainer');
+
+    if (ongoingSlots && slotContainer) {
+      ongoingSlots.addEventListener('show.bs.collapse', function () {
+        if (!slotsLoaded) {
+          fetch('/load_predefined_slots')
+            .then(res => res.text())
+            .then(html => {
+              slotContainer.innerHTML = html;
+              slotsLoaded = true;
+            })
+            .catch(err => {
+              slotContainer.innerHTML = '<div class="text-danger">Failed to load slots.</div>';
+            });
+        }
+      });
+    }
+  });
+
 </script>
 {% endblock %}

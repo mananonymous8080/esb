@@ -39,17 +39,21 @@ def index():
     num1 = random.randint(1, 10)
     num2 = random.randint(1, 10)
     expected_sum = num1 + num2
+    return render_template('index.html',
+                            num1=num1, 
+                            num2=num2, 
+                            expected_sum=expected_sum)
+
+
+@app.route('/load_predefined_slots')
+def load_predefined_slots():
     conn = get_connection()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute("SELECT * FROM predefined_slots")
     predefined_slots = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('index.html',
-                            predefined_slots=predefined_slots,
-                            num1=num1, 
-                            num2=num2, 
-                            expected_sum=expected_sum)
+    return render_template('components/slot_cards_container.html', predefined_slots=predefined_slots)
 
 
 
