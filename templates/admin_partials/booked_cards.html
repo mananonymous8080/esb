@@ -1,0 +1,51 @@
+{% for slot in booked_slots %}
+<div class="col-6 col-md-4 col-lg-3 booked-slot"
+     data-service-type="{{ slot['service_type']|lower }}"
+     data-service-date="{{ slot['service_date'] }}"
+     data-service-name="{{ slot['service_name']|lower }}"
+     data-name="{{ slot['name']|lower }}"
+     data-mobile="{{ slot['mobile'] }}"
+     data-email="{{ slot['email']|lower }}"
+     data-payment="{{ slot['payment_status'] }}">
+  <div class="card h-100 position-relative {% if slot['payment_status'] == 'PAID' %}paid{% else %}unpaid{% endif %}">
+    <div class="card-body d-flex flex-column justify-content-between">
+      {% if slot['payment_status'] != 'PAID' %}
+      <div class="position-absolute top-0 end-0 m-2">
+        <form action="{{ url_for('mark_as_paid') }}" method="POST">
+          <input type="hidden" name="slot_id" value="{{ slot['id'] }}">
+          <button type="button" class="btn mark-paid-btn" onclick="showPaymentPrompt(this)">✅</button>
+        </form>
+      </div>
+      {% endif %}
+
+      <div>
+        <h6 class="card-title fw-bold">{{ slot['service_type'] }}</h6>
+        <p class="card-text small text-muted mb-2">
+          🎯: <strong>{{ slot['service_name'] }}</strong><br>
+          👤: {{ slot['name'] }}<br>
+          📱: {{ slot['mobile'] }}<br>
+          📧: {{ slot['email'] }}<br>
+          📅: {{ slot['service_date'] }}<br>
+          ⏰: {{ slot['service_time'] }}<br>
+          📝: {{ slot['description'] }}<br>
+          Payment:
+          {% if slot['payment_status'] == 'PAID' %}
+            <span class="text-success fw-semibold">✅ ₹{{ slot['paid_amount'] }}</span>
+          {% else %}
+            <span class="text-danger fw-semibold">❌ Unpaid</span>
+          {% endif %}
+        </p>
+      </div>
+
+      {% if slot['payment_status'] == 'PAID' %}
+        <form action="{{ url_for('mark_as_done') }}" method="POST" class="mt-2">
+          <input type="hidden" name="slot_id" value="{{ slot['id'] }}">
+          <button type="submit" class="btn btn-sm btn-success w-100">✅ Done</button>
+        </form>
+      {% else %}
+        <a href="#" onclick="confirmDelete('{{ url_for('delete_slot', slot_id=slot['id']) }}')" class="btn btn-sm btn-outline-danger mt-2">🗑️ Delete</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endfor %}
