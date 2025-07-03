@@ -27,45 +27,56 @@
   flatpickr(".datepicker", { dateFormat: "Y-m-d" });
 </script>
 <script>
-  // Show loading overlay on any form submission
-  document.addEventListener('DOMContentLoaded', function () {
-    const forms = document.querySelectorAll('form');
+  // Show loading overlay only on forms with class "needs-overlay"
+document.addEventListener('DOMContentLoaded', function () {
+  const forms = document.querySelectorAll('form.needs-overlay');
 
-    forms.forEach(form => {
-      form.addEventListener('submit', function (e) {
-        const submitBtn = form.querySelector('button[type="submit"]');
-        
-        // Show the overlay
-        const overlay = document.getElementById('loadingOverlay');
-        if (overlay) {
-          overlay.style.display = 'flex';
-        }
+  forms.forEach(form => {
+    form.addEventListener('submit', function (e) {
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const overlay = document.getElementById('loadingOverlay');
+      const overlayText = document.getElementById('loadingOverlayText');
 
-        // Disable submit button and change text
-        if (submitBtn) {
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = '⏳ Booking...';
-        }
-      });
+      // Show overlay and set dynamic text
+      if (overlay && overlayText) {
+        const loadingText = submitBtn?.getAttribute('data-loading-text') || '⏳ Processing...';
+        overlayText.textContent = loadingText;
+        overlay.style.display = 'flex';
+      }
+
+      // Disable submit button and update text
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = submitBtn.getAttribute('data-loading-text') || '⏳ Processing...';
+      }
     });
   });
+});
+
 </script>
+
 
 <!-- Global Loading Overlay -->
   <div id="loadingOverlay" style="
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: none;
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;">
-    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-      <span class="visually-hidden">Processing...</span>
-    </div>
-    <div class="ms-3 fw-bold">Booking your slot, please wait...</div>
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  display: none;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  ">
+  <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+    <span class="visually-hidden">Processing...</span>
   </div>
+  <div id="loadingOverlayText" class="fw-semibold fs-5 text-primary">
+    Please wait...
+  </div>
+  </div>
+
 
 <footer class="text-center mt-5 py-3 text-muted small">
     © 2025 Ajay Kumar — Built to help you.
