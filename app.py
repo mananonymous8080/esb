@@ -1,5 +1,5 @@
 import pymysql
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import os
 from email_helper import send_booking_email 
 import random
@@ -53,7 +53,13 @@ def load_predefined_slots():
     predefined_slots = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('components/slot_cards_container.html', predefined_slots=predefined_slots)
+    num1 = random.randint(1, 10)
+    num2 = random.randint(1, 10)
+    expected_sum = num1 + num2
+    return render_template('components/predefined_slots_container.html', predefined_slots=predefined_slots,
+                        num1=num1, 
+                        num2=num2, 
+                        expected_sum=expected_sum)
 
 
 
@@ -191,21 +197,55 @@ def admin_login():
     return render_template('admin_login.html')
 
 
+# @app.route('/admin/dashboard')
+# def admin_dashboard():
+#     if not session.get('is_admin'):
+#         flash("Access denied. Please log in as admin.")
+#         return redirect(url_for('admin_login'))
+
+#     conn = get_connection()
+#     cur = conn.cursor(pymysql.cursors.DictCursor)  
+#     cur.execute("SELECT * FROM slots WHERE status IS NULL OR status = ''")
+#     booked_slots = cur.fetchall()
+#     cur.execute("SELECT * FROM predefined_slots")
+#     predefined_slots = cur.fetchall()
+#     cur.close()
+#     conn.close()
+#     return render_template('admin.html', booked_slots=booked_slots, predefined_slots=predefined_slots)
+
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if not session.get('is_admin'):
         flash("Access denied. Please log in as admin.")
         return redirect(url_for('admin_login'))
 
+    return render_template('admin.html')
+
+
+@app.route('/admin/load_data')
+def load_admin_data():
+    if not session.get('is_admin'):
+        return jsonify({'error': 'Unauthorized'}), 403
+
     conn = get_connection()
-    cur = conn.cursor(pymysql.cursors.DictCursor)  
-    cur.execute("SELECT * FROM slots WHERE status IS NULL OR status = ''")
-    booked_slots = cur.fetchall()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+
     cur.execute("SELECT * FROM predefined_slots")
     predefined_slots = cur.fetchall()
+
+    cur.execute("SELECT * FROM slots WHERE status IS NULL OR status = ''")
+    booked_slots = cur.fetchall()
+
     cur.close()
     conn.close()
-    return render_template('admin.html', booked_slots=booked_slots, predefined_slots=predefined_slots)
+
+    predefined_html = render_template('admin_partials/predefined_cards.html', predefined_slots=predefined_slots)
+    booked_html = render_template('admin_partials/booked_cards.html', booked_slots=booked_slots)
+
+    return jsonify({
+        'predefined_html': predefined_html,
+        'booked_html': booked_html
+    })
 
 
 
