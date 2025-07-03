@@ -139,6 +139,20 @@
             .then(html => {
               slotContainer.innerHTML = html;
               slotsLoaded = true;
+
+              // ✅ Attach loading overlay handler to forms inside loaded HTML
+              document.querySelectorAll('#slotContainer .modal form').forEach(form => {
+                form.addEventListener('submit', function () {
+                  const overlay = document.getElementById('loadingOverlay');
+                  if (overlay) overlay.style.display = 'flex';
+
+                  const submitBtn = form.querySelector('button[type="submit"]');
+                  if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '⏳ Booking...';
+                  }
+                });
+              });
             })
             .catch(err => {
               slotContainer.innerHTML = '<div class="text-danger">Failed to load slots.</div>';
