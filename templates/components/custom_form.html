@@ -2,7 +2,7 @@
   <div class="card p-4 shadow-lg border-0">
   <h2 class="mb-4">🎯 Book a Custom Slot</h2>
 
-  <form action="{{ url_for('book_slot') }}" method="POST" class="row g-3 justify-content-center" id="slotForm">
+  <form action="{{ url_for('book_slot') }}" method="POST" class="row g-3 justify-content-center needs-overlay" id="slotForm">
 
     <!-- Service Type Dropdown -->
     <div class="col-12 col-sm-6 col-md-5">
@@ -99,7 +99,7 @@
 
     <!-- Submit Button -->
     <div class="d-flex align-items-center justify-content-center gap-2 px-4 py-2 mt-3">
-        <button type="submit" class="btn btn-gradient-primary">🚀 Book Custom Slot</button>
+        <button type="submit" class="btn btn-gradient-primary" data-loading-text="⏳ Booking...">🚀 Book Custom Slot</button>
     </div>
 
   </form>
