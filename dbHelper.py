@@ -41,7 +41,7 @@ def ensure_tables_exist(conn):
             description TEXT,
             service_date DATE,
             service_time TIME,
-            payment_status VARCHAR(20) NOT NULL DEFAULT 'UNPAID,
+            payment_status VARCHAR(20) NOT NULL DEFAULT 'UNPAID',
             paid_amount DECIMAL(10, 2),
             status VARCHAR(50)
         )
